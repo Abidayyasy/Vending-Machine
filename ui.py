@@ -91,7 +91,7 @@ for i, (product, price) in enumerate(products.items()):
         st.subheader(product)
         st.write(f"Harga: {price} koin")
         st.button(
-            f"Tambah {product}",
+            f"Tambah",
             key=f"add_{i}",
             on_click=tambah_ke_keranjang,
             args=(product,)
