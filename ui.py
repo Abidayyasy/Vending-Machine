@@ -1,5 +1,5 @@
 import streamlit as st
-from backend import solve, get_coin_combination
+from backend import solve_bounded, get_combination_bounded
 from db import get_connection  # import koneksi DB
 
 # ---------------- CACHE DATA ----------------
@@ -62,15 +62,29 @@ if st.sidebar.button("🚗 Beli Sekarang"):
             memo = {}
             computed = {}
             last_used = {}
-
-            min_koin = solve(change, coins, memo, computed, last_used)
-            kombinasi = get_coin_combination(change, last_used)
+            # Ambil stok koin dari database
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT nominal_koin, jumlah_koin FROM koin WHERE jumlah_koin > 0")
+            stock_data = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            # Buat dictionary stok sesuai urutan coins
+            stock = {nominal: jumlah for nominal, jumlah in stock_data}
+            stock = [stock.get(nominal, 0) for nominal in coins]
+            
+            min_koin = solve_bounded(change, coins, stock, memo, last_used)
+            kombinasi = get_combination_bounded(change, coins, stock, last_used)
 
             if min_koin == float('inf') or not kombinasi:
                 st.sidebar.warning("⚠️ Koin tidak cukup untuk memberikan kembalian.")
             else:
                 st.sidebar.success(f"🔢 Kembalian diberikan dengan {min_koin} koin:")
-                st.sidebar.code(kombinasi)
+            
+            for nominal, jumlah in zip(coins, kombinasi):
+                if jumlah > 0:
+                    st.sidebar.write(f"{jumlah} x {nominal} = {jumlah * nominal}")
+
 
         st.session_state.cart = {}  # Reset keranjang setelah beli
 
