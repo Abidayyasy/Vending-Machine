@@ -1,33 +1,25 @@
 import streamlit as st
-from db import get_connection  # import koneksi ke database
 
-st.set_page_config(page_title="Login", page_icon="🔐")
+st.set_page_config(page_title="Login Admin", layout="centered")
 
-st.title("🔐 Halaman Login")
+st.title("🔐 Login Admin")
 
-# Form Login
-nama_user = st.text_input("nama_user")
+# Dummy kredensial (untuk demo, sebaiknya diganti dengan validasi DB)
+USERNAME = "admin"
+PASSWORD = "123456"
+
+# Input login
+username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
+# Tombol login
 if st.button("Login"):
-    if nama_user and password:
-        conn = get_connection()
-        cursor = conn.cursor()
+    if username == USERNAME and password == PASSWORD:
+        st.session_state["is_admin"] = True
+        st.success("✅ Login berhasil!")
 
-        query = "SELECT * FROM users WHERE nama_user = %s AND password = %s"
-        cursor.execute(query, (nama_user, password))
-        result = cursor.fetchone()
-
-        if result:
-            st.success("Login berhasil! 👏")
-            # Simpan status login di session state
-            st.session_state.logged_in = True
-            st.session_state.nama_user = nama_user
-            st.switch_page("ui.py")  # Redirect ke halaman utama
-        else:
-            st.error("nama_user atau password salah.")
-
-        cursor.close()
-        conn.close()
+        # Redirect ke halaman admin
+        st.markdown("Klik halaman **Admin** di sidebar untuk mengakses panel.")
+        # st.experimental_rerun()  # atau rerun jika ingin langsung reload
     else:
-        st.warning("Harap isi nama_user dan password.")
+        st.error("❌ Username atau password salah.")
