@@ -40,12 +40,12 @@ total_price = 0
 for item, qty in st.session_state.cart.items():
     price = products[item]["harga"] * qty
     total_price += price
-    st.sidebar.write(f"{item} x{qty} = {price} ¥")
+    st.sidebar.write(f"{item} x{qty} = Rp. {price} ")
 
 st.sidebar.write("---")
-st.sidebar.write(f"**Total: {total_price} ¥**")
+st.sidebar.write(f"**Total: Rp. {total_price}**")
 
-user_amount = st.sidebar.number_input("💰 Masukkan jumlah ¥:", min_value=0, step=100)
+user_amount = st.sidebar.number_input("💰 Masukkan jumlah (Rupiah):", min_value=0, step=100)
 
 # ---------------- BELI SEKARANG ----------------
 if st.sidebar.button("🚗 Beli Sekarang"):
@@ -56,13 +56,13 @@ if st.sidebar.button("🚗 Beli Sekarang"):
     else:
         change = user_amount - total_price
         st.sidebar.success("✅ Pembelian berhasil!")
-        st.sidebar.info(f"💸 Kembalian: {change} ¥")
+        st.sidebar.info(f"💸 Kembalian: Rp. {change} ")
 
         if change > 0:
             memo = {}
             computed = {}
             last_used = {}
-            # Ambil stok ¥ dari database
+            #Rp.  Ambil stok  dari database
             conn = get_connection()
             cursor = conn.cursor()
             cursor.execute("SELECT nominal_koin, jumlah_koin FROM koin WHERE jumlah_koin > 0")
@@ -82,7 +82,7 @@ if st.sidebar.button("🚗 Beli Sekarang"):
                 st.sidebar.success(f"🔢 Kembalian diberikan dengan {min_koin} lembar/koin:")
                 for nominal, jumlah in zip(coins, kombinasi):
                     if jumlah > 0:
-                        st.sidebar.write(f"{jumlah} x {nominal}¥  = {jumlah * nominal}¥")
+                        st.sidebar.write(f"{jumlah} x Rp. {nominal} = Rp. {jumlah *nominal}")
 
                 # ---------------- UPDATE JUMLAH KOIN DI DATABASE ----------------
                 conn = get_connection()
@@ -105,7 +105,7 @@ def tambah_ke_keranjang(nama_produk):
         st.session_state.cart[nama_produk] = 1
 
 # ---------------- UI PRODUK ----------------
-st.markdown("<h1 style='color: red;'>Vending Machine (自動販売機)</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color: red;'>Vending Machine</h1>", unsafe_allow_html=True)
 
 cols = st.columns(5)
 
@@ -120,7 +120,7 @@ card_style = """
     ">
         <img src="{img}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
         <h6 style="margin-bottom: 5px;">{name}</h6>
-        <p style="margin: 0;"><strong>{price} ¥</strong></p>
+        <p style="margin: 0;"><strong> Rp. {price} </strong></p>
     </div>
 """
 
